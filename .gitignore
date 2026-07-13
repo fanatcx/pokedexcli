@@ -13,3 +13,9 @@ pokedexcli
 
 # OS junk
 .DS_Store
+
+# repl LOGS
+repl.log
+
+# personal
+notes.txt
