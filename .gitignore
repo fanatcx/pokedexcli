@@ -1,5 +1,6 @@
 *.test
 *.out
+.vscode/
 
 # Secrets / env
 .env
