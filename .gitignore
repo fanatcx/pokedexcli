@@ -1,5 +1,11 @@
+# Compiled binary
+pokedexcli
+
+# Test + coverage output
 *.test
 *.out
+
+# Editor
 .vscode/
 
 # Secrets / env
@@ -7,4 +13,3 @@
 
 # OS junk
 .DS_Store
-EOG
