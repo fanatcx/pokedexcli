@@ -1,42 +1,28 @@
 package main
+
 import (
-	"os"
 	"bufio"
 	"fmt"
+	"os"
 )
 
 func main() {
-
-	// scanner.Scan blocks then waits for ENTER
 	scanner := bufio.NewScanner(os.Stdin)
-
-	for ;; {
+	for {
 		fmt.Print("Pokedex > ")
-		scannerBool := scanner.Scan()
-
-		if scannerBool == true {
-			userInput := scanner.Text()
-			cleanedUserInput := CleanInput(userInput)
-			fmt.Printf("Your command was: %s\n", cleanedUserInput[0])
+		if !scanner.Scan() {
+			break
 		}
 
-		if scannerBool == false {
-			
-			fmt.Println("END OF FILE.")
-			err := scanner.Err()
-			if err == nil {
-				break
-			} else {
-				fmt.Println("Error.")
-				break
-			}
-
+		cleaned := CleanInput(scanner.Text())
+		if len(cleaned) == 0 {
+			continue
 		}
-		
 
+		fmt.Printf("Your command was: %s\n", cleaned[0])
 	}
-	
-	
 
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "error reading input:", err)
+	}
 }
-
