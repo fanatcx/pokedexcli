@@ -6,9 +6,14 @@ import (
 	"os"
 )
 
+type Config struct {
+	previous *string 
+	next *string
+}
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	var config Config
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -28,7 +33,7 @@ func main() {
 			continue
 		}
 		// command fails
-		if err := comm.callback(); err != nil {
+		if err := comm.callback(&config); err != nil {
 			fmt.Println(err.Error())
 			continue
 		}

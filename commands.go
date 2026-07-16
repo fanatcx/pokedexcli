@@ -11,7 +11,7 @@ import (
 type cliCommand struct {
 	name string
 	description string
-	callback func() error
+	callback func(config *Config) error
 }
 
 var commands = map[string]cliCommand{
@@ -33,7 +33,7 @@ var commands = map[string]cliCommand{
 }
 
 
-func commandExit() error {
+func commandExit(config *Config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	func() {
 		char := `
@@ -58,7 +58,7 @@ func commandExit() error {
 
 }
 
-func commandHelp() error {
+func commandHelp(config *Config) error {
 	func() {
 		pikachu := ` 
 		Ϟ(๑⚈ ․̫ ⚈๑)⋆
@@ -71,9 +71,13 @@ func commandHelp() error {
 }
 
 // nextLocations needs to take in a object that holds the URL
-func nextLocations() error {
+func nextLocations(config *Config) error {
 	URL := baseURL + "/location-area"
-
+	
+	if config.next != nil {
+		URL = *config.next
+	}
+	
 	// pull all of the locations
 	res, err := http.Get(URL)
 	if err != nil {
@@ -91,15 +95,15 @@ func nextLocations() error {
 	if err = json.Unmarshal(bytes, &batchList); err != nil {
 		return err
 	}
-	
-	// Next 20 location areas 
-	if batchList.Previous == nil {
 
-		// lets try to get this part working first lol
-		for _, result := range batchList.Results {
-			fmt.Println(result.Name)
-			
-		}
+	
+	config.next = batchList.Next
+	config.previous = batchList.Previous
+
+	for _, result := range batchList.Results {
+		fmt.Println(result.Name)
+	    //batchList.Next = &config.next
 	}
-	return nil
+	
+	return nil 
 }
