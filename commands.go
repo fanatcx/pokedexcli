@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 )
@@ -32,8 +31,6 @@ var commands = map[string]cliCommand{
 		callback: nextLocations,
 	},
 }
-
-
 
 
 func commandExit() error {
@@ -73,34 +70,36 @@ func commandHelp() error {
 	return nil
 }
 
-// map command functions 
-func nextLocations() string {
+// nextLocations needs to take in a object that holds the URL
+func nextLocations() error {
+	URL := baseURL + "/location-area"
 
+	// pull all of the locations
+	res, err := http.Get(URL)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
 
-	// skeleton
-	for i := 1; i <= 20; i++ {
-		// first location
-		locationAddress := fmt.Sprintf("https://pokeapi.co/api/v2/berry-flavor/%v/", i)
-		res, err := http.Get(locationAddress)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		body, err := io.ReadAll(res.Body)
-		defer res.Body.Close()
-
-		// attempt to decode json
-		
-		if err := json.Unmarshal(body, ); err != nil {
-			fmt.Printf("Error: ")
-		}
-
-
-
-
-		res.Body.Close()
-
-
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
 	}
 
+	// all location areas
+	var batchList NamedAPIResourceList
+	if err = json.Unmarshal(bytes, &batchList); err != nil {
+		return err
+	}
+	
+	// Next 20 location areas 
+	if batchList.Previous == nil {
+
+		// lets try to get this part working first lol
+		for _, result := range batchList.Results {
+			fmt.Println(result.Name)
+			
+		}
+	}
+	return nil
 }

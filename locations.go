@@ -1,24 +1,16 @@
 package main
 
+const baseURL = "https://pokeapi.co/api/v2"
+
+// Pagination
+type NamedAPIResourceList struct {
+	Count    int                `json:"count"`
+	Next     *string            `json:"next"`
+	Previous *string            `json:"previous"`
+	Results  []NamedAPIResource `json:"results"`
+}
+
 type NamedAPIResource struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
-}
-
-type Location struct {
-	ID     int              `json:"id"`
-	Name   string           `json:"name"`
-	Region NamedAPIResource `json:"region"`
-
-	Names []struct {
-		Name     string           `json:"name"`
-		Language NamedAPIResource `json:"language"`
-	} `json:"names"`
-
-	GameIndices []struct {
-		GameIndex  int              `json:"game_index"`
-		Generation NamedAPIResource `json:"generation"`
-	} `json:"game_indices"`
-
-	Areas []NamedAPIResource `json:"areas"`
 }
