@@ -13,7 +13,7 @@ type Config struct {
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	var config Config
+	var config Config 
 
 	for {
 		fmt.Print("Pokedex > ")
