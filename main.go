@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"github.com/fanatcx/pokedexcli/internal/pokecache"
 )
 
 type Config struct {
