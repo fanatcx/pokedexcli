@@ -164,6 +164,9 @@ func previousLocations(config *Config) error {
 		fmt.Println(result.Name)
 	}
 
+	
+	
+
 	return nil
 
 }

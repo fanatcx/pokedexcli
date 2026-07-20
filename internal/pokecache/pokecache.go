@@ -19,13 +19,12 @@ type cacheEntry struct {
 
 func NewCache(interval time.Duration) *Cache {
 	newCache := Cache{
-		cache: make(map[string]cacheEntry, 0),
+		cache: make(map[string]cacheEntry),
 	}
-	 go newCache.reapLoop(interval)
 
+	go newCache.reapLoop(interval)
 	return &newCache
 }
-
 
 // Cache functions //////////////////////
 
@@ -42,24 +41,35 @@ func (c *Cache) Add(key string, val []byte) {
 
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	_, exist := c.cache[key]
+	// I thought reading from a map is safe?
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	cacheEntry, exist := c.cache[key]
 	if exist {
-		return c.cache[key].val, true
+		return cacheEntry.val, true
 	}
+
 	return nil, false
 }
 
-
 func (c *Cache) reapLoop(interval time.Duration) {
-	//ch := make(chan)
-	ch = time.Ticker(time.Duration)
-	//????
-	for key, _ := range c.cache {
-		
-		if interval
-		if time.Time.Compare(nan, duration) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
 
+	// Go sends the current time (time.Now()) automatically to that ticker. Didnt know this
+	for range ticker.C {
+		c.mu.Lock()
+		
+		for key, entry := range c.cache {
+			age := entry.createdAt
+			if time.Since(age) > interval {
+				delete(c.cache, key)
+			}
+			
 		}
+		// done scanning
+		c.mu.Unlock()
 	}
 
 }
