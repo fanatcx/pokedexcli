@@ -28,6 +28,7 @@ func NewCache(interval time.Duration) *Cache {
 
 // Cache functions //////////////////////
 
+// Creates a new cache entry and returns bytes. Contains info about creation time
 func (c *Cache) Add(key string, val []byte) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
