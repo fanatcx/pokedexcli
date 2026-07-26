@@ -10,20 +10,26 @@ import (
 	
 )
 
+// Config stores next address, previous address and cache data for location. Next = next 20 location areas. Previous = previous 20 areas. Previous begins at nil.
+// Dynamic cache for faster loading.
+
 type Config struct {
 	name     string
 	next     *string
 	previous *string
+	pokedex  map[string]Pokemon
 	cache    *pokecache.Cache
+	
 }
 
 func main() {
 	startURL := baseURL + "/location-area/"
-	
+	pokedex := make(map[string]Pokemon)
 
 	cfg := &Config{
 		name: "",
 		next:  &startURL,
+		pokedex: pokedex,
 		cache: pokecache.NewCache(5 * time.Second),
 	}
 
