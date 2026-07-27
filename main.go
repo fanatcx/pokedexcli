@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"os"
 	"time"
-
 	"github.com/fanatcx/pokedexcli/internal/pokecache"
-	
 )
 
 // Config stores next address, previous address and cache data for location. Next = next 20 location areas. Previous = previous 20 areas. Previous begins at nil.
@@ -45,24 +43,24 @@ func main() {
 		if len(cleaned) == 0 {
 			continue
 		}
-
-		comm, exists := commands[cleaned[0]]
+		// User submits one command, which is cleaned of whitespace
+		comm, exists := commands[cleaned[0]] 
 		if !exists {
 			fmt.Println("Invalid command")
 			continue
 		}
 		
-		// limit all commands to two params as the max
-		if len(cleaned) > 1 {
+		// User submits exactly two words. We dont have a way to check if its proper yet
+		if len(cleaned) == 2 {
 			cfg.name = cleaned[1]
 		}
 
-		// either pass the original address or pass a dereferenced name
+		// pass the Config object as a pointer, name is the second argument for specific functions
 		if err := comm.callback(cfg, cfg.name); err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		cfg.name = "" // only one function takes name and does something useful, and im ok with it
+		cfg.name = "" // reset to nil for next loop 
 	}
 
 	if err := scanner.Err(); err != nil {

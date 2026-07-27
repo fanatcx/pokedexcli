@@ -73,15 +73,16 @@ func commandExit(config *Config, name string) error {
 
 // Help for the user, displays commands
 func commandHelp(config *Config, name string) error {
-	fmt.Println("\n\t\tϞ(๑⚈ ․̫ ⚈๑)⋆")
 	fmt.Println("\nWelcome to the Pokedex!")
-	fmt.Println("Usage:")
-
+	fmt.Println("Ϟ(๑⚈ ․̫ ⚈๑)⋆")
+	fmt.Println("\t\tUsage!")
+	fmt.Println()
 	for _, cmd := range commands {
+		
 		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
-		fmt.Println()
+		//fmt.Println()
 	}
-
+	fmt.Println()
 	return nil
 }
 
@@ -134,7 +135,6 @@ func previousLocations(config *Config, name string) error {
 	}
 
 	URL := *config.previous
-
 	// check the cache first
 	data, exist := config.cache.Get(URL)
 	if !exist {
@@ -148,7 +148,6 @@ func previousLocations(config *Config, name string) error {
 		if err != nil {
 			return err
 		}
-
 		config.cache.Add(URL, data)
 	}
 
@@ -156,26 +155,22 @@ func previousLocations(config *Config, name string) error {
 	if err := json.Unmarshal(data, &batchList); err != nil {
 		return err
 	}
-
 	config.next = batchList.Next
 	config.previous = batchList.Previous
-
 	for _, result := range batchList.Results {
 		fmt.Println(result.Name)
 	}
-
 	return nil
+
 }
 
 // Lists all pokemon in current location. First use of name, parameter two
 func exploreLocation(config *Config, name string) error {
 	fmt.Printf("Exploring %s area...", name)
-
 	// 1: Check cache if name exists in cache, if not attempt to fetch from the URL. I have decided that only this function edits "name". First name will never exist
 	startURL := "https://pokeapi.co/api/v2/location-area/" + name
 	data, exist := config.cache.Get(startURL)
 
-	// 2: Download new data (non-exist)
 	if !exist {
 		res, err :=  http.Get(startURL) // we are now fetching a specific area, not 20 areas
 		if err != nil {
@@ -186,7 +181,6 @@ func exploreLocation(config *Config, name string) error {
 		if res.StatusCode >= 400 {
 			return fmt.Errorf("fetching %s: status %d", startURL, res.StatusCode)
 		}
-
 		data, err = io.ReadAll(res.Body)
 		if err != nil {
 			return err
@@ -203,16 +197,19 @@ func exploreLocation(config *Config, name string) error {
 		fmt.Println(encounter.Pokemon.Name)
 	}
 	return nil
-	
 	}
 
-	
-// Catch Pokemon Section. 
-// Re factoring the the code that fetches for data is a great idea. 
-// The reason why I dont is because I want to know this process deeper, so I write it out
 
+// Attempt to catch a pokemon, second use of name
 func catchPokemon(config *Config, name string) error {
-	_, ok := config.pokedex[name]
+	// empty name request
+	if name == "" {
+		fmt.Println("The name of the pokemon cannot be blank!")
+		return nil
+	}
+
+	pokemonName := name
+	_, ok := config.pokedex[pokemonName]
 	if ok {
 		fmt.Println("You already caught this pokemon!")
 		return nil
@@ -222,27 +219,28 @@ func catchPokemon(config *Config, name string) error {
 	if err != nil {
 		return err
 	}
-	// Improper pokemon passed in
-	if res.StatusCode >= 400 {
-		return fmt.Errorf("fetching %s: status %d", startURL, res.StatusCode)
-	}
 	defer res.Body.Close()
-	// bytes
+						// Pokemon does not exist in the api
+	if res.StatusCode >= 400 {
+		return fmt.Errorf("Woops! Something went wrong! Check the pokemon name! StatusCode: %d", res.StatusCode)
+	}
+	
+	// JSON processing
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
-
-	// Pokemon data //
+	// Pokemon Object + Usage
 	var pokemon Pokemon
 	if err := json.Unmarshal(data, &pokemon); err != nil {
 		return err
 	}
+	chance := rand.Intn(3)
+	fmt.Printf("Throwing a Pokeball at %s...\n", name)
 
-	// honestly, make tiers later, but lets do this for now 
-	chance := rand.Intn(2)
-	fmt.Printf("Throwing a Pokeball at %s\n", name)
+	// user has a 1 in 3 chance of catching it (for now)
 	if chance == 1 {
+							// full pokemon object for now. Slim it down later. We need the ID and the Name
 		config.pokedex[name] = pokemon
 		fmt.Printf("Congratulations! %s has been caught and added to the pokedex!\n", name)
 		return nil
@@ -250,6 +248,7 @@ func catchPokemon(config *Config, name string) error {
 
 	fmt.Printf("Oh No! %s ran away!\n", name)
 	return nil
+
 }
 
 
