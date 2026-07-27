@@ -204,7 +204,7 @@ func exploreLocation(config *Config, name string) error {
 func catchPokemon(config *Config, name string) error {
 	// empty name request
 	if name == "" {
-		fmt.Println("The name of the pokemon cannot be blank!")
+		fmt.Println("Improper pokemon name!")
 		return nil
 	}
 
