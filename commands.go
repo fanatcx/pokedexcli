@@ -49,6 +49,11 @@ func init() {
 			description: "Allows an attempt to catch a pokemon",
 			callback: catchPokemon,
 		},
+		"inspect": {
+			name: "inspect",
+			description: "View stats of the pokemon in your pokedex.",
+			callback: inspectPokemon,
+		},
 	}
 }
 
@@ -247,6 +252,36 @@ func catchPokemon(config *Config, name string) error {
 	}
 
 	fmt.Printf("Oh No! %s ran away!\n", name)
+	return nil
+
+}
+
+func inspectPokemon(config *Config, name string) error {
+	pokemon, exists := config.pokedex[name]
+	if !exists {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+	fmt.Println()
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %v\n", pokemon.Height)
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+	
+	fmt.Println("Stats:")
+	// Stats 
+	for _, stat := range pokemon.Stats {
+		fmt.Printf("\t-%s: %d\n",stat.Stat.Name, stat.BaseStat)
+		
+		
+	}
+	//fmt.Printf("Stats: %v", pokemon.Stats)
+
+	// Types
+	fmt.Println("Types:")
+	for _, ptype := range pokemon.Types {
+		fmt.Printf("\t- %v\n",ptype.Type.Name)
+	}
+
 	return nil
 
 }
