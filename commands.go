@@ -295,7 +295,7 @@ func inspectPokemon(config *Config, name string) error {
 func pokedexDisplay(config *Config, name string) error {
 	fmt.Println("Your Pokedex:")
 	for name := range config.pokedex {
-		fmt.Printf("\t- %s", name)
+		fmt.Printf("\t- %s\n", name)
 	}
 
 	return nil
