@@ -54,6 +54,11 @@ func init() {
 			description: "View stats of the pokemon in your pokedex.",
 			callback: inspectPokemon,
 		},
+		"pokedex": {
+			name: "pokedex",
+			description: "Display all pokemon you have caught in the pokedex!",
+			callback: pokedexDisplay,
+		},
 	}
 }
 
@@ -248,6 +253,7 @@ func catchPokemon(config *Config, name string) error {
 							// full pokemon object for now. Slim it down later. We need the ID and the Name
 		config.pokedex[name] = pokemon
 		fmt.Printf("Congratulations! %s has been caught and added to the pokedex!\n", name)
+		fmt.Printf("You may now inspect it with the inspect command!\n")
 		return nil
 	}
 
@@ -284,6 +290,15 @@ func inspectPokemon(config *Config, name string) error {
 
 	return nil
 
+}
+
+func pokedexDisplay(config *Config, name string) error {
+	fmt.Println("Your Pokedex:")
+	for name := range config.pokedex {
+		fmt.Printf("\t- %s", name)
+	}
+
+	return nil
 }
 
 
