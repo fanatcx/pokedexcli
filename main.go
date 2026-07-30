@@ -17,7 +17,6 @@ type Config struct {
 	previous *string
 	pokedex  map[string]Pokemon
 	cache    *pokecache.Cache
-	
 }
 
 func main() {
